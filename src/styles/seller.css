@@ -1,0 +1,23 @@
+.seller-form{
+  background: var(--primary-color);
+  padding: 40px;
+  border-radius: 5px;
+}
+
+.seller__btn{
+  background: #ffff !important;
+  color: var(--primary-color);
+  font-weight: 600;
+}
+
+.seller-form p{
+  margin-top: 30px;
+}
+
+.seller-form p a{
+  color: #eaeaead7;
+}
+
+.seller-form input[type='file']{
+  color: #ffff;
+}

@@ -1,0 +1,23 @@
+.form_container{
+  background: var(--primary-color);
+  padding: 40px;
+  border-radius: 5px;
+}
+
+.login__btn{
+  background: #ffff !important;
+  color: var(--primary-color);
+  font-weight: 600;
+}
+
+.form_container p{
+  margin-top: 30px;
+}
+
+.form_container p a{
+  color: #eaeaead7;
+}
+
+.form_container input[type='file']{
+  color: #ffff;
+}
