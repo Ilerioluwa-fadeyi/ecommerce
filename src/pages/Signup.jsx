@@ -5,21 +5,33 @@ import { Link, useNavigate } from 'react-router-dom';
 import '../styles/login.css';
 import { useFormik } from 'formik';
 import { SignupValidations } from '../validation';
+import { toast } from 'react-toastify';
+import { RegisterUser } from '../api';
 
 const SignUp = () => {
   const [loading, setLoading] = useState(null);
   const navigate = useNavigate();
 
-  const handleClick = (e) => {
-    e.preventDefault();
-    // Add your form submission logic here
-  };
-
-
-  const navigateToHome = () => {
-    navigate("/home");
-  };
-
+  const handleClick = async (values) => {
+    setLoading(true);
+    let payload = {
+      full_name: `${values.firstName} ${values.lastName}`,
+      email: values.email,
+      password: values.password,
+      user_type: "Level 2",
+      state: values.state,
+      city: values.city,
+    }
+    await RegisterUser(payload).then(response => {
+        if(response.data){
+            setLoading(false);
+            toast.success('User profile created successfully')
+            return navigate("/");
+        }
+        toast.error("Something went wrong")
+        setLoading(false);
+    })
+  }
   const { handleChange, handleSubmit, handleBlur, values, errors, touched, setFieldValue, isValid } =
     useFormik({
       validationSchema: SignupValidations,
@@ -27,7 +39,8 @@ const SignUp = () => {
         firstName: "",
         lastName: "",
         email: "",
-        address: "",
+        city: "",
+        state: "",
         password: "",
         confirm_password: ""
       },
@@ -74,10 +87,19 @@ const SignUp = () => {
                   <input
                     type="text"
                     placeholder="Enter your Address"
-                    value={values.address}
-                    onChange={handleChange("address")}
+                    value={values.city}
+                    onChange={handleChange("city")}
                   />
-                  {errors.address && (<p className='errors'>{errors.address}</p>)}
+                  {errors.city && (<p className='errors'>{errors.city}</p>)}
+                </FormGroup>
+                <FormGroup className="form__group">
+                  <input
+                    type="text"
+                    placeholder="Enter your State"
+                    value={values.state}
+                    onChange={handleChange("state")}
+                  />
+                  {errors.state && (<p className='errors'>{errors.state}</p>)}
                 </FormGroup>
                 <FormGroup className="form__group">
                   <input
@@ -97,7 +119,7 @@ const SignUp = () => {
                   />
                   {errors.confirm_password && (<p className='errors'>{errors.confirm_password}</p>)}
                 </FormGroup>
-                <button type="submit" className="buy__button login__btn " onClick={navigateToHome}>
+                <button type="submit" className="buy__button login__btn " disabled={loading}>
                   Register
                 </button>
                 <p> Remember your password? <Link to="/login">Log in here</Link> </p>

@@ -11,7 +11,6 @@ import { useSelector } from "react-redux";
 // import { signOut } from "firebase/auth";
 // import { auth } from "../../firebase.config";
 
-import {toast} from 'react-toastify'
 
 
 const nav__link = [
@@ -31,6 +30,7 @@ const nav__link = [
 
 const Header = () => {
   const headerRef = useRef(null);
+  const isLoggedIn = useSelector((state) => state.auth.isLoggedIn);
   const totalQuantity = useSelector((state) => state.cart.totalQuantity);
   const profileActionRef = useRef(null);
   
@@ -53,10 +53,12 @@ const Header = () => {
     });
   };
 
-
   
   useEffect(() => {
     stickyHeaderFunc();
+    if(!isLoggedIn) {
+      navigate("/");
+    }
 
     return () => window.removeEventListener("scroll", stickyHeaderFunc);
   });
@@ -64,7 +66,7 @@ const Header = () => {
   const menuToggle = () => menuRef.current.classList.toggle("active__menu");
 
   const navigateToCart = () => {
-    navigate("./cart");
+    navigate("/cart");
   };
 
   const toggleProfileActions = () =>   
@@ -78,7 +80,7 @@ const Header = () => {
     <header className="header" ref={headerRef}>
       <Container>
         <Row>
-          <div className="nav__wrapper">
+          <div className="nav__wrapper cursor-pointer" onClick={()=>navigate("/home")}>
             <div className="logo">
               <img className="logo-img" src={logo} alt="logo" />
               <div>
@@ -105,10 +107,10 @@ const Header = () => {
 
             <div className="nav__icons">
              
-              <span className="cart__icon" onClick={navigateToCart}>
+              <a href="./cart" className="cart__icon" onClick={navigateToCart}>
                 <i class="ri-shopping-bag-line"></i>
                 <span className="badge">{totalQuantity}</span>
-              </span>
+              </a>
 
              
               <div className="mobile__menu">

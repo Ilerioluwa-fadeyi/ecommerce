@@ -1,24 +1,36 @@
 import React, { useState } from 'react';
+import { useDispatch } from 'react-redux'
 import Helmet from '../components/Helmet/Helmet';
 import { Container, Row, Col, Form, FormGroup } from 'reactstrap';
 import { Link, useNavigate } from 'react-router-dom';
 import '../styles/login.css';
 import { useFormik } from 'formik';
 import { LoginValidations } from '../validation';
+import { LoginUser } from '../api';
+import { authActions } from '../redux/slices/authSlice';
 
 const Login = () => {
   const [loading, setLoading] = useState(null);
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
-  const handleClick = (e) => {
-    e.preventDefault();
-    // Add your form submission logic here
-  };
-
-
-  const navigateToHome = () => {
-    navigate("/home");
-  };
+  const handleClick = async(values) => {
+    setLoading(true);
+    const payload = {
+        email: values.email,
+        password: values.password
+    };
+    await LoginUser(payload).then(response => {
+        if(response?.token){
+            setLoading(false);
+            // setProfileData({...response?.user})
+            localStorage.setItem("_et_", response?.token);
+            dispatch(authActions.logUserIn(response?.user));
+            return navigate("/home");;
+        }
+        setLoading(false);
+    })
+  }
 
   const { handleChange, handleSubmit, handleBlur, values, errors, touched, setFieldValue, isValid } =
     useFormik({
@@ -57,7 +69,7 @@ const Login = () => {
                   />
                   {errors.password && (<p className='errors'>{errors.password}</p>)}
                 </FormGroup>
-                <button type="submit" className="buy__button login__btn " onClick={navigateToHome}>
+                <button type="submit" className="buy__button login__btn " disabled={loading}>
                   Login
                 </button>
                 <p> Don't have an account? <Link to="/signup">Create one here</Link> </p>

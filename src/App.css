@@ -33,7 +33,7 @@ h5,
 h6,
 p {
   padding: 0;
-  margin: 0;
+  margin: 0 !important;
 }
 
 p {
@@ -72,6 +72,73 @@ section{
   text-align: left;
   color: red;
   font-size: 12px;
+}
+.cursor-pointer{
+  cursor: pointer;
+}
+.text-left{
+  text-align: left;
+}
+.w-full{
+  width: 100%;
+}
+.w-60{
+  width: 240px;
+}
+.flex{
+  display: flex;
+}
+.relative{
+  position: relative;
+}
+.absolute{
+  position: absolute;
+}
+.h-full{
+  height: screen;
+}
+.rounded-md{
+  border-radius: 10px;
+}
+.z-50{
+  z-index: 5000;
+}
+.mb-5{
+  margin-bottom: 20px;
+}
+.gap-2{
+  gap: 8px
+}
+.gap-4{
+  gap: 16px
+}
+.p-3{
+  padding: 12px;
+}
+.ml-auto{
+  margin-left: auto;
+}
+.mt-auto{
+  margin-top: auto;
+}
+.my-auto{
+  margin-top: auto;
+  margin-bottom: auto;
+}
+.h-6{
+  height: 24px;
+}
+.w-6{
+  width: 24px;
+}
+.w-8{
+  width: 32px;
+}
+.h-7{
+  height: 28px;
+}
+.z-0{
+  z-index: 0;
 }
 
 @media only screen and (max-width:768px){

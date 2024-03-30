@@ -22,7 +22,9 @@ export const SignupValidations = Yup.object().shape({
         email: Yup.string()
         .email("Invalid email, please provide a valid email.")
         .required("Email is required"),
-        address: Yup.string()
+        state: Yup.string()
+        .required("State is required"),
+        city: Yup.string()
         .required("Address is required"),
         password: Yup.string()
         .min(6, "Password must be at least 6 characters")
