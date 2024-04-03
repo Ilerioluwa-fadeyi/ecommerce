@@ -48,7 +48,6 @@ const ProductDetails = () => {
       text: reviewUserMsg,
       rating,
     };
-    console.log(reviewObj);
     toast.success("Review sent successfully");
   };
 

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { toast } from 'react-toastify';
+import {useSelector} from "react-redux";
 import { useFormik } from "formik";
 import CommonSection from '../components/UI/CommonSection';
 import { Container, Row, Col, Form, FormGroup } from "reactstrap";
@@ -22,7 +23,7 @@ import { FetchProduct, RegisterUser } from "../api";
 
 const BuyerDashboard = () => {
   const [Loading, setLoading] = useState(false);
-  const navigate = useNavigate();
+  const profileData = useSelector(state => state.auth.profile);
   const [bestSalesProducts, setBestSalesProducts] = useState([]);
   const [popularProducts, setPopularProducts] = useState([]);
 
@@ -156,90 +157,93 @@ const BuyerDashboard = () => {
           </Row>
         </Container>
       </section>
-      <Col lg="6" className='m-auto text-center mb-4'>
-        <h3 className="fw-bold mb-4">Add User</h3>
-        <Form id="add_user" className="form_container" onSubmit={handleSubmit}>
-          <FormGroup className="form__group">
-            <input
-              type="text"
-              placeholder="Enter your first name"
-              value={values.firstName}
-              onChange={handleChange("firstName")}
-            />
-            {errors.firstName && (<p className='errors'>{errors.firstName}</p>)}
-          </FormGroup>
-          <FormGroup className="form__group">
-            <input
-              type="text"
-              placeholder="Enter your last name"
-              value={values.lastName}
-              onChange={handleChange("lastName")}
-            />
-            {errors.lastName && (<p className='errors'>{errors.lastName}</p>)}
-          </FormGroup>
-          <FormGroup className="form__group">
-            <input
-              type="email"
-              placeholder="Enter your Email"
-              value={values.email}
-              onChange={handleChange("email")}
-            />
-            {errors.email && (<p className='errors'>{errors.email}</p>)}
-          </FormGroup>
-          <FormGroup className="form__group">
-            <InputSelect
-                placeholder="Select Role"
-                name="sex"
-                data={[{value: "Level 2", label: "Super Admin"},{value: "Level 1", label: "Admin"}]}
-                value={values.category}
-                onChange={(selected) => setFieldValue("category", selected?.value)}
-                onBlur={setFieldTouched}
-                error={errors.category}
-                touched={touched.category}
-            />
-            {errors.category && (<p className='errors'>{errors.category}</p>)}
-          </FormGroup>
-          <FormGroup className="form__group">
-            <input
-              type="text"
-              placeholder="Enter your Address"
-              value={values.city}
-              onChange={handleChange("city")}
-            />
-            {errors.city && (<p className='errors'>{errors.city}</p>)}
-          </FormGroup>
-          <FormGroup className="form__group">
-            <input
-              type="text"
-              placeholder="Enter your State"
-              value={values.state}
-              onChange={handleChange("state")}
-            />
-            {errors.state && (<p className='errors'>{errors.state}</p>)}
-          </FormGroup>
-          <FormGroup className="form__group">
-            <input
-              type="password"
-              placeholder="Enter your Password"
-              value={values.password}
-              onChange={handleChange("password")}
-            />
-            {errors.password && (<p className='errors'>{errors.password}</p>)}
-          </FormGroup>
-          <FormGroup className="form__group">
-            <input
-              type="password"
-              placeholder="Confirm your Password"
-              value={values.confirm_password}
-              onChange={handleChange("confirm_password")}
-            />
-            {errors.confirm_password && (<p className='errors'>{errors.confirm_password}</p>)}
-          </FormGroup>
-          <button type="submit" className="buy__button login__btn " disabled={Loading}>
-            Add
-          </button>
-        </Form>
-      </Col>
+      {profileData?.user_type === "Level 2" && (
+        <Col lg="6" className='m-auto text-center mb-4'>
+          <h3 className="fw-bold mb-4">Add User</h3>
+          <Form id="add_user" className="form_container" onSubmit={handleSubmit}>
+            <FormGroup className="form__group">
+              <input
+                type="text"
+                placeholder="Enter your first name"
+                value={values.firstName}
+                onChange={handleChange("firstName")}
+              />
+              {errors.firstName && (<p className='errors'>{errors.firstName}</p>)}
+            </FormGroup>
+            <FormGroup className="form__group">
+              <input
+                type="text"
+                placeholder="Enter your last name"
+                value={values.lastName}
+                onChange={handleChange("lastName")}
+              />
+              {errors.lastName && (<p className='errors'>{errors.lastName}</p>)}
+            </FormGroup>
+            <FormGroup className="form__group">
+              <input
+                type="email"
+                placeholder="Enter your Email"
+                value={values.email}
+                onChange={handleChange("email")}
+              />
+              {errors.email && (<p className='errors'>{errors.email}</p>)}
+            </FormGroup>
+            <FormGroup className="form__group">
+              <InputSelect
+                  placeholder="Select Role"
+                  name="sex"
+                  data={[{value: "Level 2", label: "Super Admin"},{value: "Level 1", label: "Admin"}]}
+                  value={values.category}
+                  onChange={(selected) => setFieldValue("category", selected?.value)}
+                  onBlur={setFieldTouched}
+                  error={errors.category}
+                  touched={touched.category}
+              />
+              {errors.category && (<p className='errors'>{errors.category}</p>)}
+            </FormGroup>
+            <FormGroup className="form__group">
+              <input
+                type="text"
+                placeholder="Enter your Address"
+                value={values.city}
+                onChange={handleChange("city")}
+              />
+              {errors.city && (<p className='errors'>{errors.city}</p>)}
+            </FormGroup>
+            <FormGroup className="form__group">
+              <input
+                type="text"
+                placeholder="Enter your State"
+                value={values.state}
+                onChange={handleChange("state")}
+              />
+              {errors.state && (<p className='errors'>{errors.state}</p>)}
+            </FormGroup>
+            <FormGroup className="form__group">
+              <input
+                type="password"
+                placeholder="Enter your Password"
+                value={values.password}
+                onChange={handleChange("password")}
+              />
+              {errors.password && (<p className='errors'>{errors.password}</p>)}
+            </FormGroup>
+            <FormGroup className="form__group">
+              <input
+                type="password"
+                placeholder="Confirm your Password"
+                value={values.confirm_password}
+                onChange={handleChange("confirm_password")}
+              />
+              {errors.confirm_password && (<p className='errors'>{errors.confirm_password}</p>)}
+            </FormGroup>
+            <button type="submit" className="buy__button login__btn " disabled={Loading}>
+              Add
+            </button>
+          </Form>
+        </Col>
+
+      )}
     </div>
   );
 };

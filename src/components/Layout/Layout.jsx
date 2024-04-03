@@ -22,10 +22,6 @@ const Layout = () => {
   
   }, []);
 
-  console.log('====================================');
-  console.log(location);
-  console.log('====================================');
-
   return <>
    <Header/>
     <div><Routers/></div>
