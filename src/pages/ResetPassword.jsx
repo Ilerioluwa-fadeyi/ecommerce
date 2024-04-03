@@ -2,41 +2,44 @@ import React, { useState } from 'react';
 import { useDispatch } from 'react-redux'
 import Helmet from '../components/Helmet/Helmet';
 import { Container, Row, Col, Form, FormGroup } from 'reactstrap';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate,useLocation } from 'react-router-dom';
 import '../styles/login.css';
 import { useFormik } from 'formik';
-import { LoginValidations } from '../validation';
-import { LoginUser } from '../api';
+import { ResetPasswordValidations } from '../validation';
+import { resetPassword } from '../api';
 import { authActions } from '../redux/slices/authSlice';
+import { toast } from 'react-toastify';
 
-const Login = () => {
+const ResetPassword = () => {
   const [loading, setLoading] = useState(null);
   const navigate = useNavigate();
   const dispatch = useDispatch();
-
-  const handleClick = async(values) => {
+  const pathName = useLocation().search;
+  const handleClick = async(values,resetForm) => {
     setLoading(true);
     const payload = {
-        email: values.email,
-        password: values.password
+        token: pathName.replace("?token=",""),
+        password: values.password,
     };
-    await LoginUser(payload).then(response => {
+    await resetPassword(payload).then(response => {
         if(response?.message){
             setLoading(false);
-            return navigate("/2fa");;
+            toast.success("Password reset successful")
+            resetForm();
+            return navigate("/");;
         }
         setLoading(false);
     })
   }
 
-  const { handleChange, handleSubmit, handleBlur, values, errors, touched, setFieldValue, isValid } =
+  const { handleChange, handleSubmit, handleBlur, values, errors, touched, setFieldValue, isValid,resetForm } =
     useFormik({
-      validationSchema: LoginValidations,
+      validationSchema: ResetPasswordValidations,
       initialValues: {
-        email: "",
-        password: ""
+        password: "",
+        confirm_password: "",
       },
-      onSubmit: () => handleClick(values),
+      onSubmit: () => handleClick(values,resetForm),
       onReset: () => null
   });
 
@@ -46,17 +49,8 @@ const Login = () => {
         <Container>
           <Row>
             <Col lg="6" className="m-auto text-center">
-              <h3 className="fw-bold mb-4">Login</h3>
+              <h3 className="fw-bold mb-4">Reset Password</h3>
               <Form className="form_container" onSubmit={handleSubmit}>
-                <FormGroup className="form__group">
-                  <input
-                    type="email"
-                    placeholder="Enter your Email"
-                    value={values.email}
-                    onChange={handleChange("email")}
-                  />
-                  {errors.email && (<p className='errors'>{errors.email}</p>)}
-                </FormGroup>
                 <FormGroup className="form__group">
                   <input
                     type="password"
@@ -66,11 +60,18 @@ const Login = () => {
                   />
                   {errors.password && (<p className='errors'>{errors.password}</p>)}
                 </FormGroup>
+                <FormGroup className="form__group">
+                  <input
+                    type="password"
+                    placeholder="Enter your Password"
+                    value={values.confirm_password}
+                    onChange={handleChange("confirm_password")}
+                  />
+                  {errors.confirm_password && (<p className='errors'>{errors.confirm_password}</p>)}
+                </FormGroup>
                 <button type="submit" className="buy__button login__btn " disabled={loading}>
-                  Login
+                  Reset
                 </button>
-                <p> Don't have an account? <Link to="/signup">Create one here</Link> </p>
-                <p className='text-center'> <Link to="/forgot-password">Forgot password?</Link> </p>
               </Form>
             </Col>
           </Row>
@@ -80,4 +81,4 @@ const Login = () => {
   );
 };
 
-export default Login;
+export default ResetPassword;

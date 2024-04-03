@@ -1,7 +1,7 @@
 const BASE_URL = {
-  production: "https://dev-api.myfurward.com",
-  staging: "https://dev-api.myfurward.com",
-  dev: "http://18.116.87.67:8000",
+  production: "http://127.0.0.1:8000",
+  staging: "http://127.0.0.1:8000",
+  dev: "http://127.0.0.1:8000",
 };
   
 export const MIXPANEL_KEY = {

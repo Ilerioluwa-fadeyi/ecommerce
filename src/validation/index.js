@@ -34,3 +34,25 @@ export const SignupValidations = Yup.object().shape({
         .required('This is a required field.')
         .oneOf([Yup.ref('password')], 'Your passwords do not match.')
 });
+
+export const ContactFormValidations = Yup.object().shape({
+    email: Yup.string()
+      .email("Invalid email, please provide a valid email.")
+      .required("Email is required"),
+    message: Yup.string()
+      .required("Message is required")
+});
+export const ForgotPaswordValidations = Yup.object().shape({
+    email: Yup.string()
+      .email("Invalid email, please provide a valid email.")
+      .required("Email is required"),
+});
+export const ResetPasswordValidations = Yup.object().shape({
+  password: Yup.string()
+  .min(6, "Password must be at least 6 characters")
+  .matches(passwordRegExp, "Password must contain an uppercase letter,number and special character")
+  .required("Password is required"),
+  confirm_password:  Yup.string()
+  .required('This is a required field.')
+  .oneOf([Yup.ref('password')], 'Your passwords do not match.')
+});

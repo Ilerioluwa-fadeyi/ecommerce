@@ -5,14 +5,22 @@ import { Container, Row, Col } from "reactstrap";
 import "../styles/shop.css";
 import products from "../assets/data/products";
 import ProductsList from "../components/UI/ProductsList";
+import { FetchProduct } from "../api";
 
 
 const Shop = () => {
   const [productsData, setProductsData] = useState([]);
+  const handleFetchProducts = async () => {
+    await FetchProduct().then(response => {
+      if(response?.data){
+        setProductsData(response?.data)
+      }
+    })
+    return 
+  }
 
   useEffect(() => {
-    // Set the initial products data to the full list of products
-    setProductsData(products);
+    handleFetchProducts();
   }, []);
 
   const handleFilter = (e) => {
@@ -53,7 +61,6 @@ const Shop = () => {
 
     setProductsData(searchedProducts);
   };
-
   return (
     <Helmet title="Shop">
       <CommonSection title="Products" />

@@ -119,7 +119,7 @@ const SignUp = () => {
                   />
                   {errors.confirm_password && (<p className='errors'>{errors.confirm_password}</p>)}
                 </FormGroup>
-                <button type="submit" className="buy__button login__btn " disabled={loading}>
+                <button type="submit" className="buy__button login__btn ">
                   Register
                 </button>
                 <p> Remember your password? <Link to="/login">Log in here</Link> </p>

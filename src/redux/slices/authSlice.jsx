@@ -2,6 +2,7 @@ import { createSlice } from '@reduxjs/toolkit';
 
 const initialState = {
   isLoggedIn: false,
+  twofaStatus: false,
   profile: {},
 };
 
@@ -15,7 +16,11 @@ const authSlice = createSlice({
     },
     logUserOut: (state, action) => {
       state.isLoggedIn = false;
+      state.twofaStatus= false;
       state.profile = {};
+    },
+    securityCheckPass: (state, action) => {
+      state.twofaStatus = true;
     },
   },
 });

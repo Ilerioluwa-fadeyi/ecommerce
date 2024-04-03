@@ -5,38 +5,35 @@ import { Container, Row, Col, Form, FormGroup } from 'reactstrap';
 import { Link, useNavigate } from 'react-router-dom';
 import '../styles/login.css';
 import { useFormik } from 'formik';
-import { LoginValidations } from '../validation';
-import { LoginUser } from '../api';
+import { ForgotPaswordValidations } from '../validation';
+import { forgotPassword, LoginUser } from '../api';
 import { authActions } from '../redux/slices/authSlice';
+import { toast } from 'react-toastify';
 
-const Login = () => {
+const ForgotPassword = () => {
   const [loading, setLoading] = useState(null);
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
-  const handleClick = async(values) => {
+  const handleClick = async(values,resetForm) => {
     setLoading(true);
-    const payload = {
-        email: values.email,
-        password: values.password
-    };
-    await LoginUser(payload).then(response => {
+    await forgotPassword(values.email).then(response => {
         if(response?.message){
             setLoading(false);
-            return navigate("/2fa");;
+            toast.success('Kindly check your email for further instructions')
+            return resetForm()
         }
         setLoading(false);
     })
   }
 
-  const { handleChange, handleSubmit, handleBlur, values, errors, touched, setFieldValue, isValid } =
+  const { handleChange, handleSubmit, handleBlur, values, errors, touched, setFieldValue, resetForm } =
     useFormik({
-      validationSchema: LoginValidations,
+      validationSchema: ForgotPaswordValidations,
       initialValues: {
-        email: "",
-        password: ""
+        email: ""
       },
-      onSubmit: () => handleClick(values),
+      onSubmit: () => handleClick(values,resetForm),
       onReset: () => null
   });
 
@@ -46,7 +43,7 @@ const Login = () => {
         <Container>
           <Row>
             <Col lg="6" className="m-auto text-center">
-              <h3 className="fw-bold mb-4">Login</h3>
+              <h3 className="fw-bold mb-4">Forgot Password</h3>
               <Form className="form_container" onSubmit={handleSubmit}>
                 <FormGroup className="form__group">
                   <input
@@ -57,20 +54,10 @@ const Login = () => {
                   />
                   {errors.email && (<p className='errors'>{errors.email}</p>)}
                 </FormGroup>
-                <FormGroup className="form__group">
-                  <input
-                    type="password"
-                    placeholder="Enter your Password"
-                    value={values.password}
-                    onChange={handleChange("password")}
-                  />
-                  {errors.password && (<p className='errors'>{errors.password}</p>)}
-                </FormGroup>
                 <button type="submit" className="buy__button login__btn " disabled={loading}>
-                  Login
+                  Submit
                 </button>
-                <p> Don't have an account? <Link to="/signup">Create one here</Link> </p>
-                <p className='text-center'> <Link to="/forgot-password">Forgot password?</Link> </p>
+                <p> Remember your password? <Link to="/login">Log in here</Link> </p>
               </Form>
             </Col>
           </Row>
@@ -80,4 +67,4 @@ const Login = () => {
   );
 };
 
-export default Login;
+export default ForgotPassword;

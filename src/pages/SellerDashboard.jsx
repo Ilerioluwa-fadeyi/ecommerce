@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import {useDispatch} from "react-redux";
+import {useDispatch,useSelector} from "react-redux";
 import products, {addProduct} from "../assets/data/products";
 import Helmet from '../components/Helmet/Helmet';
 import { Container, Row, Col, Form, FormGroup } from 'reactstrap';
@@ -11,6 +11,7 @@ import { productActions } from '../redux/slices/productSlice';
 
 const SellerDashboard = () => {
   const dispatch = useDispatch();
+  const userProfile = useSelector(state => state.auth.profile);
   const [Loading, setLoading] = useState(false);
   const [File, setFile] = useState(null);
   const [progresspercent, setProgresspercent] = useState(0);
@@ -19,7 +20,7 @@ const SellerDashboard = () => {
     price: '',
     shortDesc: '',
     category: '',
-    quantity: 0,
+    quantity: '',
     imageFile: null,
   });
 
@@ -32,20 +33,25 @@ const SellerDashboard = () => {
   };
 
   const handleClick = async () => {
+    if(userProfile?.user_type !== "Level 2"){
+      return toast.error("User does not have required permission!")
+    }
     setLoading(true);
     const payload = {
         name: formData.productName,
-        price: formData.price,
-        quantity: formData.quantity,
+        price: parseInt(formData.price),
+        quantity: parseInt(formData.quantity),
         description: formData.shortDesc,
         category: formData.category,
         photo: formData.imageFile,
     };
     await CreateProduct(payload).then(response => {
-        if(response?.message){
+        if(response?.data){
             setLoading(false);
-            dispatch(productActions.addProduct(response?.message));
+            // dispatch(productActions.addProduct(response?.message));
             toast.success("Product added successfully");
+            setFile(null);
+            setProgresspercent(0);
             return setFormData({
               productName: '',
               price: '',
@@ -63,8 +69,6 @@ const SellerDashboard = () => {
     e.preventDefault();
     handleClick();
   };
-  
-
   return (
   
 
@@ -107,13 +111,18 @@ const SellerDashboard = () => {
                   />
                 </FormGroup>
                 <FormGroup className='form__group'>
-                  <input
+                  {/* <input
                     type="text"
                     name="category"
                     placeholder="Category"
                     value={formData.category}
                     onChange={handleChange}
-                  />
+                  /> */}
+                  <select className='w-full p-2 rounded-sm outline-none' name='category' onChange={handleChange}>
+                    <option value="">Select Category</option>
+                    <option value="furniture">Furniture</option>
+                    <option value="skincare">Skin Care</option>
+                  </select>
                 </FormGroup>
 
                 <FormGroup className='form__group'>
@@ -126,14 +135,14 @@ const SellerDashboard = () => {
                 </FormGroup>
 
                 <FileUploadInput
-                    location="petProfile"
-                    label="Upload Photo:"
-                    name="photo"
-                    handleChange={setFormData}
-                    File={File}
-                    setFile={setFile}
-                    progresspercent={progresspercent}
-                    setProgresspercent={setProgresspercent}
+                  location="petProfile"
+                  label="Upload Photo:"
+                  name="photo"
+                  handleChange={setFormData}
+                  File={File}
+                  setFile={setFile}
+                  progresspercent={progresspercent}
+                  setProgresspercent={setProgresspercent}
                 />
 
 

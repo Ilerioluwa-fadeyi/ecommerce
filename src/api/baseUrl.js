@@ -9,7 +9,7 @@ if (window.location.href.includes("localhost")) {
   environment = "dev";
   mixpanelKey = MIXPANEL_KEY.dev;
   url = BASE_URL.dev;
-} else if (window.location.href.includes("http://dev-api.myfurward.com")) {
+} else if (window.location.href.includes("https")) {
   environment = "staging";
   mixpanelKey = MIXPANEL_KEY.staging;
   url = BASE_URL.staging;

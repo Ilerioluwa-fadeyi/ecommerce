@@ -1,16 +1,9 @@
 import React, { useRef, useEffect } from "react";
 import "./header.css";
-import { motion } from "framer-motion";
 import logo from "../../assets/images/eco-logo.png";
 import { NavLink, useNavigate, Link } from "react-router-dom";
 import { Container, Row } from "reactstrap";
-import userIcon from "../../assets/images/user-icon.png";
 import { useSelector } from "react-redux";
-
-// import useAuth from "../../custom-hooks/useAuth";
-// import { signOut } from "firebase/auth";
-// import { auth } from "../../firebase.config";
-
 
 
 const nav__link = [
@@ -30,7 +23,6 @@ const nav__link = [
 
 const Header = () => {
   const headerRef = useRef(null);
-  const isLoggedIn = useSelector((state) => state.auth.isLoggedIn);
   const totalQuantity = useSelector((state) => state.cart.totalQuantity);
   const profileActionRef = useRef(null);
   
@@ -56,9 +48,6 @@ const Header = () => {
   
   useEffect(() => {
     stickyHeaderFunc();
-    if(!isLoggedIn) {
-      navigate("/");
-    }
 
     return () => window.removeEventListener("scroll", stickyHeaderFunc);
   });

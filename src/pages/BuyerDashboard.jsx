@@ -18,53 +18,59 @@ import counterImg from "../assets/images/counter-timer-img.png";
 import Clock from "../components/UI/Clock";
 import { SignupValidations } from "../validation";
 import InputSelect from "../components/InputSelect";
+import { FetchProduct, RegisterUser } from "../api";
 
 const BuyerDashboard = () => {
   const [Loading, setLoading] = useState(false);
   const navigate = useNavigate();
-  const [trendingProducts, setTrendingProducts] = useState([]);
   const [bestSalesProducts, setBestSalesProducts] = useState([]);
-  const [mobileProducts, setMobileProducts] = useState([]);
-  const [wirelessProducts, setWirelessProducts] = useState([]);
   const [popularProducts, setPopularProducts] = useState([]);
 
   const year = new Date().getFullYear();
 
-  useEffect(() => {
-  
-    const filteredBestSalesProducts = products.filter(
-      (item) => item.category === "sofa"
-    );
-    const filteredPopularProducts = products.filter(
-      (item) => item.category === "skincare"
-    );
+  const handleFetchProducts = async () => {
+    await FetchProduct().then(response => {
+      if(response?.data){
+        const filteredBestSalesProducts = response?.data.filter(
+          (item) => item.category === "furniture"
+        );
+        const filteredPopularProducts = products.filter(
+          (item) => item.category === "skincare"
+        );
+    
+        setBestSalesProducts(filteredBestSalesProducts);
+        setPopularProducts(filteredPopularProducts);
+      }
+    })
+    return 
+  }
 
-    setBestSalesProducts(filteredBestSalesProducts);
-    setPopularProducts(filteredPopularProducts);
+  useEffect(() => {
+    handleFetchProducts();
   }, []);
 
-  const handleClick = async (values) => {
+  const handleClick = async (values,resetForm) => {
     setLoading(true);
     let payload = {
       full_name: `${values.firstName} ${values.lastName}`,
       email: values.email,
       password: values.password,
-      user_type: values.user_type,
+      user_type: values.category,
       state: values.state,
       city: values.city,
     }
-    // await RegisterUser(payload).then(response => {
-    //     if(response.data){
-    //         setLoading(false);
-    //         toast.success('User profile created successfully')
-    //         return navigate("/");
-    //     }
-    //     toast.error("Something went wrong")
-    //     setLoading(false);
-    // })
+    await RegisterUser(payload).then(response => {
+        if(response.data){
+            setLoading(false);
+            toast.success('User profile created successfully')
+            return resetForm();
+        }
+        toast.error("Something went wrong")
+        setLoading(false);
+    })
   }
 
-  const { handleChange, handleSubmit, handleBlur, values, errors, touched, setFieldValue, setFieldTouched } =
+  const { handleChange, handleSubmit, handleBlur, values, errors, touched, setFieldValue, setFieldTouched,resetForm } =
     useFormik({
       initialValues: {
         firstName: "",
@@ -76,7 +82,7 @@ const BuyerDashboard = () => {
         password: "",
         confirm_password: ""
       },
-      onSubmit: () => handleClick(values),
+      onSubmit: () => handleClick(values,resetForm),
       onReset: () => null
   });
   return (
@@ -146,7 +152,7 @@ const BuyerDashboard = () => {
             <Col lg="12" className="text-center mb-5">
               <h2 className="section__title">Popular in Category</h2>
             </Col>
-            <ProductsList data={popularProducts} />
+            <ProductsList data={bestSalesProducts} />
           </Row>
         </Container>
       </section>
@@ -182,8 +188,7 @@ const BuyerDashboard = () => {
           </FormGroup>
           <FormGroup className="form__group">
             <InputSelect
-                // label="Sex:"
-                placeholder="Select Sex"
+                placeholder="Select Role"
                 name="sex"
                 data={[{value: "Level 2", label: "Super Admin"},{value: "Level 1", label: "Admin"}]}
                 value={values.category}

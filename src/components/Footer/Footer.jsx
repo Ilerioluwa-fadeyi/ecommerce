@@ -1,12 +1,14 @@
-import React from 'react'
+import React from 'react';
+import {useDispatch} from 'react-redux';
 
 import './footer.css'
 
 import { Container, Row, Col, ListGroup, ListGroupItem } from 'reactstrap'
 import { Link } from 'react-router-dom'
+import { authActions } from '../../redux/slices/authSlice'
 
-const Footer = () => {
-
+const Footer = ({twofaStatus,isLoggedIn}) => {
+  const dispatch = useDispatch()
   const year = new Date().getFullYear()
   return (
     <footer className="footer">
@@ -65,7 +67,10 @@ const Footer = () => {
               </ListGroupItem>
 
               <ListGroupItem className='ps-0 border-0'>
-                <Link to='/login'>Log In</Link>
+                
+                {isLoggedIn && twofaStatus ? (
+                  <Link to='/' onClick={()=>dispatch(authActions.logUserOut)}>Log Out</Link>
+                ) : (<Link to='/login'>Log In</Link>)}
               </ListGroupItem>
 
               <ListGroupItem className='ps-0 border-0'>
@@ -98,13 +103,7 @@ const Footer = () => {
 
             </ListGroup>
            </div>
-           </Col>
-
-           <Col lg='12'>
-           <p className="footer__copyright">
-            Copyright {year } developed by Tosin Badmus. All rights reserved. 
-           </p>
-           </Col>  
+           </Col> 
         </Row>
        </Container>
     </footer>
