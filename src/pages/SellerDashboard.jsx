@@ -1,13 +1,14 @@
 import React, { useState } from 'react';
 import {useDispatch,useSelector} from "react-redux";
-import products, {addProduct} from "../assets/data/products";
+import { toast } from 'react-toastify';
 import Helmet from '../components/Helmet/Helmet';
 import { Container, Row, Col, Form, FormGroup } from 'reactstrap';
-import { toast } from 'react-toastify';
 import "../styles/seller.css";
 import FileUploadInput from '../components/FileUploadInput';
-import { CreateProduct } from '../api';
+import { CreateProduct, RegisterUser } from '../api';
+import InputSelect from "../components/InputSelect";
 import { productActions } from '../redux/slices/productSlice';
+import { useFormik } from 'formik';
 
 const SellerDashboard = () => {
   const dispatch = useDispatch();
@@ -24,7 +25,7 @@ const SellerDashboard = () => {
     imageFile: null,
   });
 
-  const handleChange = (e) => {
+  const Change = (e) => {
     const { name, value, files } = e.target;
     setFormData((prevFormData) => ({
       ...prevFormData,
@@ -32,7 +33,7 @@ const SellerDashboard = () => {
     }));
   };
 
-  const handleClick = async () => {
+  const createUser = async () => {
     if(userProfile?.user_type !== "Level 2"){
       return toast.error("User does not have required permission!")
     }
@@ -65,10 +66,46 @@ const SellerDashboard = () => {
     })
   };
 
-  const handleSubmit = (e) => {
+  const Submit = (e) => {
     e.preventDefault();
-    handleClick();
+    createUser();
   };
+  const handleClick = async (values,resetForm) => {
+    setLoading(true);
+    let payload = {
+      full_name: `${values.firstName} ${values.lastName}`,
+      email: values.email,
+      password: values.password,
+      user_type: values.category,
+      state: values.state,
+      city: values.city,
+    }
+    await RegisterUser(payload).then(response => {
+        if(response.data){
+            setLoading(false);
+            toast.success('User profile created successfully')
+            return resetForm();
+        }
+        toast.error("Something went wrong")
+        setLoading(false);
+    })
+  }
+
+  const { handleChange, handleSubmit, handleBlur, values, errors, touched, setFieldValue, setFieldTouched,resetForm } =
+    useFormik({
+      initialValues: {
+        firstName: "",
+        lastName: "",
+        email: "",
+        city: "",
+        state: "",
+        user_type: "",
+        password: "",
+        confirm_password: ""
+      },
+      onSubmit: () => handleClick(values,resetForm),
+      onReset: () => null
+  });
   return (
   
 
@@ -77,17 +114,17 @@ const SellerDashboard = () => {
         <Container>
           <Row>
             
-              <Col lg="6" className='m-auto text-center'>
-            <h3 className="fw-bold mb-4">Welcome Seller</h3>
+            <Col lg="6" className='m-auto text-center'>
+              <h3 className="fw-bold mb-4">Create Product</h3>
 
-              <Form className='seller-form' onSubmit={handleSubmit} >
+              <Form className='seller-form' onSubmit={Submit} >
                 <FormGroup className='form__group'>
                   <input
                     type="text"
                     name="productName"
                     placeholder="Product Name"
                     value={formData.productName}
-                    onChange={handleChange}
+                    onChange={Change}
                   />
                 </FormGroup>
 
@@ -97,7 +134,7 @@ const SellerDashboard = () => {
                     name="price"
                     placeholder="Price"
                     value={formData.price}
-                    onChange={handleChange}
+                    onChange={Change}
                   />
                 </FormGroup>
 
@@ -107,7 +144,7 @@ const SellerDashboard = () => {
                     name="quantity"
                     placeholder="Quantity"
                     value={formData.quantity}
-                    onChange={handleChange}
+                    onChange={Change}
                   />
                 </FormGroup>
                 <FormGroup className='form__group'>
@@ -118,7 +155,7 @@ const SellerDashboard = () => {
                     value={formData.category}
                     onChange={handleChange}
                   /> */}
-                  <select className='w-full p-2 rounded-sm outline-none' name='category' onChange={handleChange}>
+                  <select className='w-full p-2 rounded-sm outline-none' name='category' onChange={Change}>
                     <option value="">Select Category</option>
                     <option value="furniture">Furniture</option>
                     <option value="skincare">Skin Care</option>
@@ -130,7 +167,7 @@ const SellerDashboard = () => {
                     name="shortDesc"
                     placeholder="Short Description"
                     value={formData.shortDesc}
-                    onChange={handleChange}
+                    onChange={Change}
                   />
                 </FormGroup>
 
@@ -153,6 +190,92 @@ const SellerDashboard = () => {
               </Form>
 
             </Col>
+            {userProfile?.user_type === "Level 2" && (
+              <Col lg="6" className='m-auto text-center mb-4'>
+                <h3 className="fw-bold mb-4">Add User</h3>
+                <Form id="add_user" className="form_container" onSubmit={handleSubmit}>
+                  <FormGroup className="form__group">
+                    <input
+                      type="text"
+                      placeholder="Enter your first name"
+                      value={values.firstName}
+                      onChange={handleChange("firstName")}
+                    />
+                    {errors.firstName && (<p className='errors'>{errors.firstName}</p>)}
+                  </FormGroup>
+                  <FormGroup className="form__group">
+                    <input
+                      type="text"
+                      placeholder="Enter your last name"
+                      value={values.lastName}
+                      onChange={handleChange("lastName")}
+                    />
+                    {errors.lastName && (<p className='errors'>{errors.lastName}</p>)}
+                  </FormGroup>
+                  <FormGroup className="form__group">
+                    <input
+                      type="email"
+                      placeholder="Enter your Email"
+                      value={values.email}
+                      onChange={handleChange("email")}
+                    />
+                    {errors.email && (<p className='errors'>{errors.email}</p>)}
+                  </FormGroup>
+                  <FormGroup className="form__group">
+                    <InputSelect
+                        placeholder="Select Role"
+                        name="sex"
+                        data={[{value: "Level 2", label: "Super Admin"},{value: "Level 1", label: "Admin"}]}
+                        value={values.category}
+                        onChange={(selected) => setFieldValue("category", selected?.value)}
+                        onBlur={setFieldTouched}
+                        error={errors.category}
+                        touched={touched.category}
+                    />
+                    {errors.category && (<p className='errors'>{errors.category}</p>)}
+                  </FormGroup>
+                  <FormGroup className="form__group">
+                    <input
+                      type="text"
+                      placeholder="Enter your Address"
+                      value={values.city}
+                      onChange={handleChange("city")}
+                    />
+                    {errors.city && (<p className='errors'>{errors.city}</p>)}
+                  </FormGroup>
+                  <FormGroup className="form__group">
+                    <input
+                      type="text"
+                      placeholder="Enter your State"
+                      value={values.state}
+                      onChange={handleChange("state")}
+                    />
+                    {errors.state && (<p className='errors'>{errors.state}</p>)}
+                  </FormGroup>
+                  <FormGroup className="form__group">
+                    <input
+                      type="password"
+                      placeholder="Enter your Password"
+                      value={values.password}
+                      onChange={handleChange("password")}
+                    />
+                    {errors.password && (<p className='errors'>{errors.password}</p>)}
+                  </FormGroup>
+                  <FormGroup className="form__group">
+                    <input
+                      type="password"
+                      placeholder="Confirm your Password"
+                      value={values.confirm_password}
+                      onChange={handleChange("confirm_password")}
+                    />
+                    {errors.confirm_password && (<p className='errors'>{errors.confirm_password}</p>)}
+                  </FormGroup>
+                  <button type="submit" className="buy__button login__btn " disabled={Loading}>
+                    Add
+                  </button>
+                </Form>
+              </Col>
+            )}
             
           </Row>
         </Container>

@@ -1,5 +1,6 @@
 import React from "react";
 import { Container, Row, Col } from "reactstrap";
+import { useNavigate } from "react-router-dom";
 import heroImg from "../assets/images/betterbg.png";
 import buyerImg from "../assets/images/buyer.png";
 import sellerImg from "../assets/images/seller.png";
@@ -10,6 +11,7 @@ import { motion } from "framer-motion";
 
 
 const Home = () => {
+  const navigate = useNavigate();
   return (
       <div>
 
@@ -46,7 +48,7 @@ const Home = () => {
                   whileTap={{ scale: 1.2 }}
                   className="buy__button"
                 >
-                  <Link to="/buyerdashboard">Shop Now</Link>
+                  <Link to="/buyerdashboard" onClick={navigate("/buyerdashboard")}>Shop Now</Link>
                 </motion.button>
              </div>
             </Col>
