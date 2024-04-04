@@ -6,10 +6,15 @@ import './footer.css'
 import { Container, Row, Col, ListGroup, ListGroupItem } from 'reactstrap'
 import { Link } from 'react-router-dom'
 import { authActions } from '../../redux/slices/authSlice'
+import { cartActions } from '../../redux/slices/cartSlice';
 
 const Footer = ({twofaStatus,isLoggedIn}) => {
   const dispatch = useDispatch()
-  const year = new Date().getFullYear()
+  const year = new Date().getFullYear();
+  const handleLogout = () => {
+    dispatch(cartActions.clearCart());
+    dispatch(authActions.logUserOut);
+  }
   return (
     <footer className="footer">
        <Container>
@@ -69,7 +74,7 @@ const Footer = ({twofaStatus,isLoggedIn}) => {
               <ListGroupItem className='ps-0 border-0'>
                 
                 {isLoggedIn && twofaStatus ? (
-                  <Link to='/' onClick={()=>dispatch(authActions.logUserOut)}>Log Out</Link>
+                  <Link to='/' onClick={handleLogout}>Log Out</Link>
                 ) : (<Link to='/login'>Log In</Link>)}
               </ListGroupItem>
 
