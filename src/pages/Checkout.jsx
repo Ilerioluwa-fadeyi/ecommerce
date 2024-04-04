@@ -5,14 +5,16 @@ import Helmet from '../components/Helmet/Helmet';
 import { Container, Row, Col, Form, FormGroup } from "reactstrap";
 import CommonSection from '../components/UI/CommonSection';
 
-import { useSelector } from "react-redux";
+import { useDispatch,useSelector } from "react-redux";
 
 import "../styles/checkout.css";
 import { CreateOrder } from "../api";
 import { useFormik } from "formik";
+import { cartActions } from "../redux/slices/cartSlice";
 
 const Checkout = () => {
   const [Loading, setLoading] = useState(false);
+  const dispatch = useDispatch();
   const navigate = useNavigate();
   const totalQty = useSelector((state) => state.cart.totalQuantity);
   const totalAmount = useSelector((state) => state.cart.totalAmount);
@@ -30,6 +32,7 @@ const Checkout = () => {
             setLoading(false);
             toast.success("Order Successful");
             resetForm();
+            dispatch(cartActions.clearCart());
             return navigate("/shop");;
         }
         setLoading(false);
@@ -38,9 +41,9 @@ const Checkout = () => {
   const { handleChange, handleSubmit, handleBlur, values, errors, touched, setFieldValue, isValid,resetForm } =
     useFormik({
       initialValues: {
-        card_number: "", //123412341234
-        cvv: "", //321
-        exp_date: "" // 10/2026
+        card_number: "",
+        cvv: "",
+        exp_date: ""
       },
       onSubmit: () => handleClick(values,resetForm),
       onReset: () => null
