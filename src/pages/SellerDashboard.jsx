@@ -27,9 +27,14 @@ const SellerDashboard = () => {
 
   const Change = (e) => {
     const { name, value, files } = e.target;
+    let properValue = value;
+
+    if ( (name === "price" || name === "quantity") && value < 0 ) {
+      properValue = value.slice(1);
+    }
     setFormData((prevFormData) => ({
       ...prevFormData,
-      [name]: value
+      [name]: properValue
     }));
   };
 

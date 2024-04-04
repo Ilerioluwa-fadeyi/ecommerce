@@ -29,11 +29,11 @@ const Checkout = () => {
     };
     await CreateOrder(payload).then(response => {
         if(response?.message){
-            setLoading(false);
-            toast.success("Order Successful");
-            resetForm();
-            dispatch(cartActions.clearCart());
-            return navigate("/shop");;
+          setLoading(false);
+          toast.success("Order Successful");
+          resetForm();
+          dispatch(cartActions.clearCart());
+          return navigate("/shop");
         }
         setLoading(false);
     })
