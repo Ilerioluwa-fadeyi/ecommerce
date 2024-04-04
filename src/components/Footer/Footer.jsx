@@ -13,7 +13,7 @@ const Footer = ({twofaStatus,isLoggedIn}) => {
   const year = new Date().getFullYear();
   const handleLogout = () => {
     dispatch(cartActions.clearCart());
-    dispatch(authActions.logUserOut);
+    dispatch(authActions.logUserOut());
   }
   return (
     <footer className="footer">
